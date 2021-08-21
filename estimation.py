@@ -1,12 +1,14 @@
 import math
 
+import os
+import sys
 import matplotlib.pyplot as plt
 import numpy as np
 
 from parse_file import ParseData
 
-a = ParseData(
-    "/Users/francesco/PycharmProjects/pythonProject1/Crover Application - Robotics Software Engineer Challenge")
+print(os.path.dirname(sys.argv[0]))
+a = ParseData(os.path.dirname(sys.argv[0]))
 
 dt = 0
 # EKF data

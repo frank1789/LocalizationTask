@@ -2,6 +2,13 @@
 
 This particular task requires found a possible algorithm to localize a car using the data contained in the files.
 
+To run script:
+```shell
+python3 estimation.py
+```
+
+
+
 ## preliminary operation
 First, it was necessary to parse every single file to retrieve data and properly manipulate them.
 Due to the presence of the timestamp collected by system as Linux time stamp, I converted it in the difference of time using a standard library of python and NumPy 

@@ -7,8 +7,8 @@ import numpy as np
 
 from parse_file import ParseData
 
-print(os.path.dirname(sys.argv[0]))
-a = ParseData(os.path.dirname(sys.argv[0]))
+# print(os.path.dirname(sys.argv[0]))
+a = ParseData(os.getcwd())
 
 dt = 0
 # EKF data

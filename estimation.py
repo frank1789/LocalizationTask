@@ -21,7 +21,7 @@ gnss_noise = np.diag([5, 5]) ** 2  # set from data
 
 
 def input_system():
-    """ compute input starting from odometric values"""
+    """compute input starting from odometer values"""
     vx = a.odometry_data[:, 2:3]  # linear velocity_y [m/s]
     vy = a.odometry_data[:, 1:2]  # linear velocity_x [m/s]
     v = np.add(vx, vy)
@@ -42,25 +42,28 @@ def perform_observation(xTrue, xd, u):
 
 
 def car_model(x, u):
-    F = np.array([[1.0, 0, 0, 0],
-                  [0, 1.0, 0, 0],
-                  [0, 0, 1.0, 0],
-                  [0, 0, 0, 0]])
+    F = np.array([[1.0, 0, 0, 0], [0, 1.0, 0, 0], [0, 0, 1.0, 0], [0, 0, 0, 0]])
 
-    B = np.array([[dt * math.cos(x[2, 0]), 0],
-                  [dt * math.sin(x[2, 0]), 0],
-                  [0.0, dt],
-                  [1.0, 0.0]])
+    B = np.array(
+        [
+            [dt * math.cos(x[2, 0]), 0],
+            [dt * math.sin(x[2, 0]), 0],
+            [0.0, dt],
+            [1.0, 0.0],
+        ]
+    )
 
     x = F @ x + B @ u
     return x
 
 
 def observation(x):
-    H = np.array([
-        [1, 0, 0, 0],
-        [0, 1, 0, 0],
-    ])
+    H = np.array(
+        [
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+        ]
+    )
     z = H @ x
     return z
 
@@ -82,20 +85,25 @@ def jacobian(x, u):
     """
     yaw = x[2, 0]
     v = u[0, 0]
-    jac = np.array([
-        [1.0, 0.0, -dt * v * math.sin(yaw), dt * math.cos(yaw)],
-        [0.0, 1.0, dt * v * math.cos(yaw), dt * math.sin(yaw)],
-        [0.0, 0.0, 1.0, 0.0],
-        [0.0, 0.0, 0.0, 1.0]])
+    jac = np.array(
+        [
+            [1.0, 0.0, -dt * v * math.sin(yaw), dt * math.cos(yaw)],
+            [0.0, 1.0, dt * v * math.cos(yaw), dt * math.sin(yaw)],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ]
+    )
 
     return jac
 
 
 def jacobian_observation():
-    j_obs = np.array([
-        [1, 0, 0, 0],
-        [0, 1, 0, 0],
-    ])
+    j_obs = np.array(
+        [
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+        ]
+    )
 
     return j_obs
 
@@ -116,10 +124,13 @@ def perfome_estimation(qEst, pEst, z, u):
     return qEst, pEst
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     xEst = np.zeros((4, 1))  # initialize estimation as [0, 0, 0]
     # initialize x original position starting from ground_truth
-    xTrue = np.add(np.zeros((4, 1)), np.array([a.groundtruth_data[0, 1:2], a.groundtruth_data[0, 2:3], [0], [0]]))
+    xTrue = np.add(
+        np.zeros((4, 1)),
+        np.array([a.groundtruth_data[0, 1:2], a.groundtruth_data[0, 2:3], [0], [0]]),
+    )
     pEst = np.eye(4)  # initial Pest [0,0,0,0]
     xDR = np.zeros((4, 1))
     # store information to plot follow
@@ -132,7 +143,12 @@ if __name__ == '__main__':
         dt = a.odometry_data[i, 0]
         u = input_system()[i]  # extract input from odom data
         # update x True from ground truth
-        xTrue = np.add(np.zeros((4, 1)), np.array([a.groundtruth_data[i, 1:2], a.groundtruth_data[i, 2:3], [0], [0]]))
+        xTrue = np.add(
+            np.zeros((4, 1)),
+            np.array(
+                [a.groundtruth_data[i, 1:2], a.groundtruth_data[i, 2:3], [0], [0]]
+            ),
+        )
         xTrue, z, xDR, ud = perform_observation(xTrue, xDR, u)
         xEst, pEst = perfome_estimation(xEst, pEst, z, ud)
 
@@ -145,8 +161,7 @@ if __name__ == '__main__':
         # plot
         plt.cla()
         plt.plot(hz[0, :], hz[1, :], ".g")
-        plt.plot(hxTrue[0, :].flatten(),
-                 hxTrue[1, :].flatten(), "-b")
+        plt.plot(hxTrue[0, :].flatten(), hxTrue[1, :].flatten(), "-b")
         plt.axis("equal")
         plt.grid(True)
         plt.pause(0.001)
